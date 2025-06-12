@@ -4,9 +4,7 @@ spring:
     driverClassName: org.h2.Driver
     username: geno
     password: nice
-  jpa:
-    hibernate:
-      ddl-auto: update
+ 
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
