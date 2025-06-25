@@ -2,6 +2,7 @@ package com.vho.activ.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,35 +10,36 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "ATTENDANCE")
 public class Attendance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long attendanceId;
 
     @ManyToOne
-    @JoinColumn(name = "volunteer_id")
+    @JoinColumn(name = "volId")
     private Volunteer volunteer;
 
     @ManyToOne
-    @JoinColumn(name = "meeting_id")
-    private Meeting meeting;
+    @JoinColumn(name = "actId")
+    private Activity activity;
 
-    private LocalDateTime checkInTime;
-    private LocalDateTime checkOutTime;
+    private LocalDateTime checkIn;
+    private String status;
+    private LocalDateTime checkOut;
+    private int totalMin;
 
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    @Transient
+    public String getDurationFormated() {
+        int hours = totalMin / 60;
+        int remainder = totalMin % 60;
 
-    public void calculateAttendance(LocalDateTime checkInTime, LocalDateTime checkOutTime) {
-
-        if (this.checkInTime.isBefore(checkInTime) || this.checkInTime.isAfter(checkInTime.plusMinutes(15)) || this.checkInTime.isEqual(checkInTime)) {
-            status = Status.ON_TIME;
-        } else if (this.checkInTime.isAfter(checkInTime.plusMinutes(17))) {
-            status = Status.LATER;
-        }
-        else status = Status.ABSENT;
-
+        if (hours > 0)
+            return hours + " hours " + remainder + " remainder";
+        return remainder + " remainder";
     }
+
 }

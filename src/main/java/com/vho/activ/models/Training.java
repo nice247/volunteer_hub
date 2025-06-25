@@ -13,23 +13,28 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "VOLUNTEERS")
-public class Volunteer {
+@Table(name = "TRAINING")
+public class Training {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long volId;
+    private Long trainId;
 
-    private String fullName;
-    private String email;
-    private String phone;
-    private String nationality;
-    private String address;
+    @ManyToOne
+    @JoinColumn(name = "volId")
+    private Volunteer volunteer;
 
     @ManyToOne
     @JoinColumn(name = "commId")
     private Committee committee;
 
-    private String role = "VOLUNTEER";
-    private LocalDate regDate;
-    private String status;
+    private String trainType;
+    private String priority;
+
+    @ManyToOne
+    @JoinColumn(name = "sourceEvalId")
+    private Evaluation sourceEvaluation;
+
+    private String notes;
+    private String createdBy;
+    private LocalDate createdDate;
 }

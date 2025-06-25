@@ -6,30 +6,31 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "VOLUNTEERS")
-public class Volunteer {
+@Table(name = "REPORT")
+//This entity is intended to report a problem
+public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long volId;
+    private Long repId;
 
-    private String fullName;
-    private String email;
-    private String phone;
-    private String nationality;
-    private String address;
+    @ManyToOne
+    @JoinColumn(name = "volId")
+    private Volunteer reporter;
 
     @ManyToOne
     @JoinColumn(name = "commId")
     private Committee committee;
 
-    private String role = "VOLUNTEER";
-    private LocalDate regDate;
+    private String repType;
+    private String description;
+    private LocalDateTime repDate;
     private String status;
+    private String resolution;
 }
