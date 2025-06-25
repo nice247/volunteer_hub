@@ -8,6 +8,7 @@ import com.vho.activ.service.ApologyService;
 import com.vho.activ.service.AttendanceService;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -23,39 +24,103 @@ public class ActivityController {
     private ApologyService apologyService;
 
     @GetMapping("/comm/{id}/activities")
-    public List<Activity> getActivityByCommId(@PathVariable Long id) {
-        return activityService.getAllActivitiesByCommitteeId(id);
-    }
-    @GetMapping("/attendance/{id}")
-    public Attendance getAttendanceById(@PathVariable Long id) {
-        return attendanceService.getAttendanceById(id);
-    }
-    @GetMapping("/activities/{id}/attendance")
-    public Attendance getAttendByActId(@PathVariable Long id) {
-        return attendanceService.getAttendanceByActivity_ActId(id);
-    }
-    @GetMapping("/volunteer/{id}/attendance")
-    public List<Attendance> getVolunteerAttendanceBetween(@PathVariable Long id,
-                                                          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-                                                          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate endDate) {
+    public ResponseEntity<?> getActivityByCommId(@PathVariable Long id) {
+        try {
+            List<Activity> activities = activityService.getAllActivitiesByCommitteeId(id);
+            if (activities.isEmpty())
+                return ResponseEntity.status(204).build();
+            return ResponseEntity.ok(activities);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
 
-        return attendanceService.getAttendByVolunteerIdAndActivity_DateBetween(id, startDate, endDate);
     }
+
+    @GetMapping("/attendance/{id}")
+    public ResponseEntity<?> getAttendanceById(@PathVariable Long id) {
+        try {
+            Attendance attendance = attendanceService.getAttendanceById(id);
+            if (attendance == null)
+                return ResponseEntity.status(404).body("Attendance not found");
+            return ResponseEntity.ok(attendance);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/activities/{id}/attendance")
+    public ResponseEntity<?> getAttendByActId(@PathVariable Long id) {
+        try {
+            Attendance attendance = attendanceService.getAttendanceByActivity_ActId(id);
+            if (attendance == null)
+                return ResponseEntity.status(404).body("Attendance not found");
+            return ResponseEntity.ok(attendance);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/volunteer/{id}/attendance")
+    public ResponseEntity<?> getVolunteerAttendanceBetween(@PathVariable Long id,
+                                                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        try {
+            List<Attendance> attendances = attendanceService.getAttendByVolunteerIdAndActivity_DateBetween(id, startDate, endDate);
+            if (attendances.isEmpty())
+                return ResponseEntity.status(204).build();
+            return ResponseEntity.ok(attendances);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
+    }
+
     @GetMapping("/{id}/apologies")
-    public List<Apology> getApologiesByActivityId(@PathVariable Long id) {
-        return apologyService.getAllApologiesByActivityId(id);
+    public ResponseEntity<?> getApologiesByActivityId(@PathVariable Long id) {
+        try {
+            List<Apology> apologies = apologyService.getAllApologiesByActivityId(id);
+            if (apologies.isEmpty())
+                return ResponseEntity.status(204).build();
+            return ResponseEntity.ok(apologies);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
+
     @GetMapping("/apologies")
-    public List<Apology> getAllApologies(){
-        return apologyService.getAllApologies();
+    public ResponseEntity<?> getAllApologies() {
+        try {
+            List<Apology> apologies = apologyService.getAllApologies();
+            if (apologies.isEmpty())
+                return ResponseEntity.status(204).build();
+            return ResponseEntity.ok(apologies);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
+
     @PostMapping("/{id}/chick-in/{volId}")
-    public Attendance chickInAttendance(@PathVariable Long id, @PathVariable Long volId) {
-        return attendanceService.checkInAttendance(id, volId);
+    public ResponseEntity<?> chickInAttendance(@PathVariable Long id, @PathVariable Long volId) {
+        try {
+            Attendance attendance = attendanceService.checkInAttendance(id, volId);
+            if (attendance == null)
+                return ResponseEntity.status(404).body("Attendance not found");
+            return ResponseEntity.ok(attendance);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
+
     @PutMapping("/{id}/chick-out/{volId}")
-    public Attendance chickOutAttendance(@PathVariable Long volId, @PathVariable Long id) {
-        return attendanceService.checkOutAttendance(volId, id);
+    public ResponseEntity<?> chickOutAttendance(@PathVariable Long volId, @PathVariable Long id) {
+        try {
+            Attendance attendance = attendanceService.checkOutAttendance(volId, id);
+            if (attendance.getCheckIn() == null)
+                return ResponseEntity.status(404).body("Attendance not found");
+            return ResponseEntity.ok(attendance);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
 
 }

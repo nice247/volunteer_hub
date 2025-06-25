@@ -1,10 +1,14 @@
 package com.vho.activ.controllers;
+
 import com.vho.activ.models.*;
 import com.vho.activ.service.*;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 @RestController
 @RequestMapping("/volunteers")
 @AllArgsConstructor
@@ -20,36 +24,96 @@ public class VolunteerController {
     private ReportService reportService;
 
     @GetMapping("/{id}")
-    public Volunteer getVolunteerById(@PathVariable Long id) {
-        return volunteerService.getVolunteerById(id);
+    public ResponseEntity<?> getVolunteerById(@PathVariable Long id) {
+        try {
+            Volunteer volunteer = volunteerService.getVolunteerById(id);
+            if (volunteer == null)
+                return ResponseEntity.status(404).body("Volunteer not found");
+            return ResponseEntity.ok(volunteer);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
+
     @GetMapping("/{id}/attends")
-    public List<Attendance> getAttendanceByVolunteerId(@PathVariable Long id) {
-        return attendanceService.getAttendanceByVolunteerId(id);
+    public ResponseEntity<?> getAttendanceByVolunteerId(@PathVariable Long id) {
+        try {
+            List<Attendance> attendances = attendanceService.getAttendanceByVolunteerId(id);
+            if (attendances.isEmpty())
+                return ResponseEntity.status(204).build();
+            return ResponseEntity.ok(attendances);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
+
     @GetMapping("/{id}/notify")
-    public Notification getNotificationByRecipientId(@PathVariable Long id) {
-        return notificationService.getNotificationByRecipientId(id);
+    public ResponseEntity<?> getNotificationByRecipientId(@PathVariable Long id) {
+        try {
+            Notification notification = notificationService.getNotificationByRecipientId(id);
+            if (notification == null)
+                return ResponseEntity.status(404).body("Notification not found");
+            return ResponseEntity.ok(notification);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
+
     @GetMapping("/{id}/trainings")
-    public List<Training> getTrainingByVolunteerId(@PathVariable Long id) {
-        return trainingService.getAllTrainingByVolunteerId(id);
+    public ResponseEntity<?> getTrainingByVolunteerId(@PathVariable Long id) {
+        try {
+            List<Training> trainings = trainingService.getAllTrainingByVolunteerId(id);
+            if (trainings.isEmpty())
+                return ResponseEntity.status(204).build();
+            return ResponseEntity.ok(trainings);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
+
     @GetMapping("/{id}/task")
-    public Task getTaskByVolunteerId(@PathVariable Long id) {
-        return taskService.getTaskByAssignedTo(id);
+    public ResponseEntity<?> getTaskByVolunteerId(@PathVariable Long id) {
+        try {
+            Task task = taskService.getTaskByAssignedTo(id);
+            if (task == null)
+                return ResponseEntity.status(404).body("Task not found");
+            return ResponseEntity.ok(task);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
+
     @GetMapping("/{id}/evaluation")
-    public Evaluation getEvaluationByVolunteerId(@PathVariable Long id) {
-        return evaluationService.getEvaluationsByEvaluatedId(id);
+    public ResponseEntity<?> getEvaluationByVolunteerId(@PathVariable Long id) {
+        try {
+            Evaluation evaluation = evaluationService.getEvaluationsByEvaluatedId(id);
+            if (evaluation == null)
+                return ResponseEntity.status(404).body("Evaluation not found");
+            return ResponseEntity.ok(evaluation);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
+
     @PostMapping("/apology")
-    public Apology addApology(@RequestBody Apology apology) {
-        return apologyService.saveApology(apology);
+    public ResponseEntity<?> addApology(@RequestBody Apology apology) {
+        try {
+            Apology apology1 = apologyService.saveApology(apology);
+            return ResponseEntity.status(201).body(apology1);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
+
     }
+
     @PostMapping("/report")
-    public Report addReport(@RequestBody Report report) {
-        return reportService.saveReport(report);
+    public ResponseEntity<?> addReport(@RequestBody Report report) {
+        try {
+            Report report1 = reportService.saveReport(report);
+            return ResponseEntity.status(201).body(report1);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
 
 }

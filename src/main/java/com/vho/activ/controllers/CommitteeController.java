@@ -3,6 +3,7 @@ package com.vho.activ.controllers;
 import com.vho.activ.models.*;
 import com.vho.activ.service.*;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,36 +22,102 @@ public class CommitteeController {
     private ApologyService apolygonService;
 
     @GetMapping("/{id}")
-    public Committee getCommitteeById(@PathVariable Long id) {
-        return committeeService.getCommitteeById(id);
+    public ResponseEntity<?> getCommitteeById(@PathVariable Long id) {
+        try {
+            Committee committee = committeeService.getCommitteeById(id);
+            if (committee == null)
+                return ResponseEntity.status(404).body("Committee not found");
+            return ResponseEntity.ok(committee);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
+
     @GetMapping("/{name}")
-    public Committee getCommitteeByName(@PathVariable String name) {
-        return committeeService.getCommitteeByName(name);
+    public ResponseEntity<?> getCommitteeByName(@PathVariable String name) {
+        try {
+            Committee committee = committeeService.getCommitteeByName(name);
+            if (committee == null)
+                return ResponseEntity.status(404).body("Committee not found");
+            return ResponseEntity.ok(committee);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
+
     @GetMapping("/{id}/tasks")
-    public List<Task> getTasksByCommittee(@PathVariable Long id) {
-        return taskService.getAllTasksByCommitteeId(id);
+    public ResponseEntity<?> getTasksByCommittee(@PathVariable Long id) {
+        try {
+            List<Task> tasks = taskService.getAllTasksByCommitteeId(id);
+            if (tasks.isEmpty())
+                return ResponseEntity.status(204).build();
+            return ResponseEntity.ok(tasks);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
+
     @GetMapping("/{id}/attendances")
-    public List<Attendance> getAttendancesByCommittee(@PathVariable Long id) {
-        return attendanceService.getAttendanceByCommitteeId(id);
+    public ResponseEntity<?> getAttendancesByCommittee(@PathVariable Long id) {
+        try {
+            List<Attendance> attendances = attendanceService.getAttendanceByCommitteeId(id);
+            if (attendances.isEmpty())
+                return ResponseEntity.status(204).build();
+            return ResponseEntity.ok(attendances);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+
     }
+
     @GetMapping("/{id}/evaluations")
-    public List<Evaluation> getEvaluationsByCommitteeId(@PathVariable Long id) {
-        return evaluationService.getEvaluationsByCommitteeId(id);
+    public ResponseEntity<?> getEvaluationsByCommitteeId(@PathVariable Long id) {
+        try {
+            List<Evaluation> evaluations = evaluationService.getEvaluationsByCommitteeId(id);
+            if (evaluations.isEmpty())
+                return ResponseEntity.status(204).build();
+            return ResponseEntity.ok(evaluations);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
+
     @GetMapping("/{id}/trainings")
-    public List<Training> getTrainingsByCommitteeId(@PathVariable Long id) {
-        return trainingService.getAllTrainingByCommittee_CommId(id);
+    public ResponseEntity<?> getTrainingsByCommitteeId(@PathVariable Long id) {
+        try {
+            List<Training> trainings = trainingService.getAllTrainingByCommittee_CommId(id);
+            if (trainings.isEmpty())
+                return ResponseEntity.status(204).build();
+            return ResponseEntity.ok(trainings);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
+
     @GetMapping("/{id}/reports")
-    public List<Report> getReportsByCommitteeId(@PathVariable Long id) {
-        return reportService.getReportsByCommitteeId(id);
+    public ResponseEntity<?> getReportsByCommitteeId(@PathVariable Long id) {
+        try {
+            List<Report> reports = reportService.getReportsByCommitteeId(id);
+            if (reports.isEmpty())
+                return ResponseEntity.status(204).build();
+            return ResponseEntity.ok(reports);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+
     }
+
     @GetMapping("/{id}/apologies")
-    public List<Apology> getApologiesByVolunteerId(@PathVariable Long id) {
-        return apolygonService.getAllApologiesByVolunteerId(id);
+    public ResponseEntity<?> getApologiesByVolunteerId(@PathVariable Long id) {
+        try {
+            List<Apology> apologies = apolygonService.getAllApologiesByVolunteerId(id);
+            if (apologies.isEmpty())
+                return ResponseEntity.status(204).build();
+            return ResponseEntity.ok(apologies);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+
     }
 
 }
